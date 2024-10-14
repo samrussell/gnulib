@@ -27,29 +27,29 @@ main (int argc, char *argv[])
 {
   uint32_t p;
 
-  p = crc32_update_no_xor (42, "foo", 3);
-  if (p != 0x46e87f05)
+  p = crc32_update_no_xor (42, "foobarbazzbuzz", 14);
+  if (p != 0xf0009b19)
     {
       printf ("cunx got %lx\n", (unsigned long) p);
       return 1;
     }
 
-  p = crc32_no_xor ("foo", 3);
-  if (p != 0x7332bc33)
+  p = crc32_no_xor ("foobarbazbuz", 12);
+  if (p != 0x7dab8665)
     {
       printf ("cnx got %lx\n", (unsigned long) p);
       return 1;
     }
 
-  p = crc32_update (42, "foo", 3);
-  if (p != 0xb9a9a617)
+  p = crc32_update (42, "foobarbazbuz", 12);
+  if (p != 0xf4787393)
     {
       printf ("cu got %lx\n", (unsigned long) p);
       return 1;
     }
 
-  p = crc32 ("foo", 3);
-  if (p != 0x8c736521)
+  p = crc32 ("foobarbazbuz", 12);
+  if (p != 0x67e400a)
     {
       printf ("c got %lx\n", (unsigned long) p);
       return 1;
