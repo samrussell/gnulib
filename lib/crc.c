@@ -455,8 +455,6 @@ crc32_update_no_xor_by_byte (uint32_t crc, const char *buf, size_t len)
 uint32_t
 crc32_update_no_xor_slice_by_4 (uint32_t crc, const uint32_t *buf)
 {
-  uint32_t temp;
-
   crc = crc ^ *buf;
   return crc32_sliceby4_table[3][(crc >> 24) & 0xFF] ^ \
     crc32_sliceby4_table[2][(crc >> 16) & 0xFF] ^ \
@@ -467,8 +465,6 @@ crc32_update_no_xor_slice_by_4 (uint32_t crc, const uint32_t *buf)
 uint32_t
 crc32_update_no_xor_slice_by_8 (uint32_t crc, const uint32_t *buf)
 {
-  uint32_t temp;
-
   crc = crc ^ *buf;
   crc = crc32_sliceby8_table[3][(crc >> 24) & 0xFF] ^ \
     crc32_sliceby8_table[2][(crc >> 16) & 0xFF] ^ \
@@ -484,12 +480,17 @@ crc32_update_no_xor (uint32_t crc, const char *buf, size_t len)
   size_t n, slice_alignment;
 
   slice_alignment = (len & (-8));
-
-  for (n = 0; n < slice_alignment; n += 8)
+  
+  for (n = 0; n < slice_alignment; n += 8){
+#pragma GCC diagnostic ignored "-Wcast-align"
     crc = crc32_update_no_xor_slice_by_8(crc, (const uint32_t*) (buf + n));
+  }
 
-  if (len > slice_alignment)
+  if (len > slice_alignment){
     crc = crc32_update_no_xor_by_byte(crc, buf + slice_alignment, len - slice_alignment);
+  }
+  
+  //crc = crc32_update_no_xor_by_byte(crc, buf, len);
 
   return crc;
 }
