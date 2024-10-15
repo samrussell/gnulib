@@ -21,11 +21,19 @@
 #include "crc.h"
 
 #include <stdio.h>
+#include <string.h>
 
 int
 main (int argc, char *argv[])
 {
   uint32_t p;
+  size_t i;
+  char plaintext[] = "Gnulib crc testsGnulib crc tests"
+                     "Gnulib crc testsGnulib crc tests"
+                     "Gnulib crc testsGnulib crc tests"
+                     "Gnulib crc testsGnulib crc tests"
+                     "Gnulib crc testsGnulib crc tests";
+  char data[sizeof(plaintext) + sizeof(unsigned long int)];
 
   p = crc32_update_no_xor (42, "foo", 3);
   if (p != 0x46e87f05)
@@ -54,6 +62,26 @@ main (int argc, char *argv[])
       printf ("c got %lx\n", (unsigned long) p);
       return 1;
     }
+
+  /*
+   * Test for new CRC32 implementation
+   * The original implementation works on a byte-by-byte basis
+   * but new implementations may work on 8 or 16 byte alignments.
+   * This test will confirm correct operation with non-aligned
+   * data.
+   */
+
+  for (i = 0; i < sizeof(unsigned long int); i++)
+    {
+      memcpy(data + i, plaintext, sizeof(plaintext));
+      p = crc32_update_no_xor (0, data + i, sizeof(plaintext));
+      if (p != 0x654978c3)
+        {
+          printf ("aligned c at %lu got %lx\n", i, (unsigned long) p);
+          return 1;
+        }
+    }
+
 
   return 0;
 }
