@@ -21,11 +21,18 @@
 #include "crc.h"
 
 #include <stdio.h>
+#include <string.h>
 
 int
 main (int argc, char *argv[])
 {
   uint32_t p;
+  size_t i;
+  char plaintext[] = "This file is free software: you can redistribu"
+                     "te it and/or modify it under the terms of the "
+                     "GNU Lesser General Public License as published"
+                     " by th";
+  char data[128 + 16 + 16];
 
   p = crc32_update_no_xor (42, "foo", 3);
   if (p != 0x46e87f05)
@@ -54,6 +61,30 @@ main (int argc, char *argv[])
       printf ("c got %lx\n", (unsigned long) p);
       return 1;
     }
+
+  /*
+   * Test for new CRC32 implementation
+   * The original implementation works on a byte-by-byte basis
+   * but the new one will work on 8 or 16 byte alignments, so
+   * these tests will confirm correct operation with non-aligned
+   * data and data that isn't even multiples of 16 in length.
+   *
+   * The PCLMUL implementation takes 128 bytes at a time on
+   * 16-byte alignment, so we will do 128 + 16 bytes of plaintext
+   * and alter the alignment up to 16 bytes
+   */
+
+  for (i = 0; i < 16; i++)
+    {
+      memcpy(data + i, plaintext, 128 + 16);
+      p = crc32_update_no_xor (0, data + i, 128 + 16);
+      if (p != 0x18c9bfb0)
+        {
+          printf ("aligned c at %lu got %lx\n", i, (unsigned long) p);
+          return 1;
+        }
+    }
+
 
   return 0;
 }
