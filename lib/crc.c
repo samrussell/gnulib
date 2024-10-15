@@ -391,30 +391,30 @@ static const uint32_t crc32_sliceby8_table[][256] = {
  * When we calculate the CRC32 byte-by-byte we take the checksum
  * up to the previous byte, XOR it with our new byte, run CRC32
  * and then XOR against the remaining bytes from the prior checksum:
- * 
+ *
  * c0 = prior checksum
  * d0,d1 = bytes 0 and 1 of our data
  * c1 = (c0 >> 8)
  * c2 = CRC32(c0 ^ d0) ^ c1
  * c3 = (c2 >> 8)
  * c4 = CRC32(c2 ^ d1) ^ c3
- * 
+ *
  * The CRC32 function is "affine" which means that
  * CRC32(a ^ b) = CRC32(a) ^ CRC32(b)
- * 
+ *
  * and therefore we can move some of the terms around, e.g.
- * 
+ *
  * c4 = CRC32(CRC32(c0 ^ d0) ^ c1 ^ d1) ^ c3
  * c4 = CRC32(CRC32(c0 ^ d0)) ^ CRC32(c1 ^ d1) ^ c3
- * 
+ *
  * Another way to look at this is
- * 
+ *
  * CRC32(0x1200) ^ CRC32(0x34) = CRC32(0x1234)
- * 
+ *
  * With the slice-by-8 method, we extend the table-lookup technique
  * from a single table of 0x00 to 0xFF, but also every 0x100 from
  * 0x0000 to 0xFF00, and for 0x000000 to 0xFF0000 etc.
- * 
+ *
  * We can then calculate by taking 8 bytes of plaintext and then
  * looking up each one individually and XORing them together
  * at the end.
@@ -466,7 +466,7 @@ crc32_update_no_xor (uint32_t crc, const char *buf, size_t len)
   size_t n, slice_alignment;
 
   slice_alignment = (len & (-8));
-  
+
   for (n = 0; n < slice_alignment; n += 8){
     crc = crc32_update_no_xor_slice_by_8(crc, buf + n);
   }
