@@ -19,10 +19,11 @@
 #include <config.h>
 
 #include "crc.h"
+#include "endian.h"
 
 #include <string.h>
 
-#ifdef CRC_ENABLE_SLICE_BY_8
+#ifdef GL_CRC_SLICE_BY_8
 /* Slice-by-8 lookup tables */
 static const uint32_t crc32_sliceby8_table[][256] = {
   {
@@ -425,7 +426,7 @@ crc32_update_no_xor_slice_by_8 (uint32_t crc, const char *buf)
 {
   uint64_t local_buf;
   memcpy(&local_buf, buf, 8);
-  local_buf = local_buf ^ crc;
+  local_buf = le64toh(local_buf) ^ crc;
   crc =
     crc32_sliceby8_table[0][(local_buf >> 56) & 0xFF] ^ \
     crc32_sliceby8_table[1][(local_buf >> 48) & 0xFF] ^ \
@@ -443,19 +444,18 @@ uint32_t
 crc32_update_no_xor_slice_by_n (uint32_t crc, const char *buf, size_t num_bytes)
 {
   uint64_t local_buf;
+  size_t i;
+
   memcpy(&local_buf, buf, num_bytes);
-  local_buf = local_buf ^ crc;
+  local_buf = le64toh(local_buf) ^ crc;
 
-  if (num_bytes >= 4) {
+  if (num_bytes >= 4)
     crc = 0;
-  }
-  else {
+  else
     crc = crc >> (num_bytes * 8);
-  }
 
-  for (size_t i = 0; i < num_bytes; i++) {
+  for (i = 0; i < num_bytes; i++)
     crc = crc ^ crc32_sliceby8_table[i][(local_buf >> ((num_bytes - i - 1) * 8)) & 0xFF];
-  }
 
   return crc;
 }
@@ -467,13 +467,11 @@ crc32_update_no_xor (uint32_t crc, const char *buf, size_t len)
 
   slice_alignment = (len & (-8));
 
-  for (n = 0; n < slice_alignment; n += 8){
+  for (n = 0; n < slice_alignment; n += 8)
     crc = crc32_update_no_xor_slice_by_8(crc, buf + n);
-  }
 
-  if (len > n) {
+  if (len > n)
     crc = crc32_update_no_xor_slice_by_n(crc, buf + n, len - n);
-  }
 
   return crc;
 }
