@@ -24,14 +24,14 @@
  * crc_table_computed flag, to extend it to accept a variable number
  * of bits (described below), and reformatted to follow GNU
  * formatting guidelines.
- * 
+ *
  * make_crc_table() takes a number of bits and generates a lookup
  * table for the CRC32 algorithm. Usage is as follows:
- * 
+ *
  * make_crc_table(8) : generate for CRC32(0x00) to CRC32(0xFF)
  * make_crc_table(16) : generate for CRC32(0x0000) to CRC32 (0xFF00)
  * in increments of 0x100
- * 
+ *
  * This is used for the Sarwate algorithm specified in RFC 1952
  * which uses a single lookup table of make_crc_table(8), and for
  * the slice-by-8 algorithm which uses 8 tables from in 8-bit
