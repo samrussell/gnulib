@@ -23,6 +23,8 @@
 
 #include <string.h>
 
+#define GL_CRC_SLICE_BY_8 1
+
 #ifdef GL_CRC_SLICE_BY_8
 /* Slice-by-8 lookup tables */
 static const uint32_t crc32_sliceby8_table[][256] = {
@@ -441,6 +443,97 @@ crc32_update_no_xor_slice_by_8 (uint32_t crc, const char *buf)
 }
 
 uint32_t
+crc32_update_no_xor_slice_by_8_polynomial (uint32_t crc, const char *buf)
+{
+  uint64_t local_buf;
+  memcpy(&local_buf, buf, 8);
+  local_buf = le64toh(local_buf) ^ crc;
+    local_buf = local_buf ^ \
+          (local_buf << 6) ^ \
+          (local_buf << 9) ^ \
+          (local_buf << 10) ^ \
+          (local_buf << 12) ^ \
+          (local_buf << 16) ^ \
+          (local_buf << 24) ^ \
+          (local_buf << 25) ^ \
+          (local_buf << 26) ^ \
+          (local_buf << 28) ^ \
+          (local_buf << 29) ^ \
+          (local_buf << 30) ^ \
+          (local_buf << 31) ^ \
+          (local_buf << 32) ^ \
+          (local_buf << 34) ^ \
+          (local_buf << 37) ^ \
+          (local_buf << 44) ^ \
+          (local_buf << 45) ^ \
+          (local_buf << 47) ^ \
+          (local_buf << 48) ^ \
+          (local_buf << 50) ^ \
+          (local_buf << 53) ^ \
+          (local_buf << 54) ^ \
+          (local_buf << 55) ^ \
+          (local_buf << 58) ^ \
+          (local_buf << 60) ^ \
+          (local_buf << 61) ^ \
+          (local_buf << 63);
+    
+    local_buf = (local_buf >> 32) ^ \
+          (local_buf >> 33) ^ \
+          (local_buf >> 34) ^ \
+          (local_buf >> 36) ^ \
+          (local_buf >> 37) ^ \
+          (local_buf >> 39) ^ \
+          (local_buf >> 40) ^ \
+          (local_buf >> 42) ^ \
+          (local_buf >> 43) ^ \
+          (local_buf >> 44) ^ \
+          (local_buf >> 48) ^ \
+          (local_buf >> 54) ^ \
+          (local_buf >> 55) ^ \
+          (local_buf >> 58);
+
+  return (uint32_t) local_buf;
+}
+
+uint32_t
+crc32_update_no_xor_slice_by_4 (uint32_t crc, const char *buf)
+{
+  uint32_t local_buf;
+  memcpy(&local_buf, buf, 4);
+  local_buf = le64toh(local_buf) ^ crc;
+    crc = local_buf ^ \
+          (local_buf << 6) ^ \
+          (local_buf << 9) ^ \
+          (local_buf << 10) ^ \
+          (local_buf << 12) ^ \
+          (local_buf << 16) ^ \
+          (local_buf << 24) ^ \
+          (local_buf << 25) ^ \
+          (local_buf << 26) ^ \
+          (local_buf << 28) ^ \
+          (local_buf << 29) ^ \
+          (local_buf << 30) ^ \
+          (local_buf << 31);
+    
+    crc = crc ^ \
+          (crc >> 1) ^ \
+          (crc >> 2) ^ \
+          (crc >> 4) ^ \
+          (crc >> 5) ^ \
+          (crc >> 7) ^ \
+          (crc >> 8) ^ \
+          (crc >> 10) ^ \
+          (crc >> 11) ^ \
+          (crc >> 12) ^ \
+          (crc >> 16) ^ \
+          (crc >> 22) ^ \
+          (crc >> 23) ^ \
+          (crc >> 26);
+
+  return crc;
+}
+
+uint32_t
 crc32_update_no_xor_slice_by_n (uint32_t crc, const char *buf, size_t num_bytes)
 {
   uint64_t local_buf;
@@ -468,7 +561,7 @@ crc32_update_no_xor (uint32_t crc, const char *buf, size_t len)
   slice_alignment = (len & (-8));
 
   for (n = 0; n < slice_alignment; n += 8)
-    crc = crc32_update_no_xor_slice_by_8(crc, buf + n);
+    crc = crc32_update_no_xor_slice_by_8_polynomial(crc, buf + n);
 
   if (len > n)
     crc = crc32_update_no_xor_slice_by_n(crc, buf + n, len - n);
