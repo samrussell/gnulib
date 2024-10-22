@@ -7,8 +7,13 @@ lib/crc.c
 
 Depends-on:
 stdint
+endian
 
 configure.ac:
+if test $gl_crc_slice_by_8 != no; then
+  AC_DEFINE([GL_CRC_SLICE_BY_8], [1],
+    [Define to get faster but larger CRC32 operation.])
+fi
 
 Makefile.am:
 lib_SOURCES += crc.c
