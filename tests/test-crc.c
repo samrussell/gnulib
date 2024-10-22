@@ -27,7 +27,7 @@
 
 #define MAX_ALIGNMENT 32
 
-__uint32_t trailing_unaligned_byte_hashes[32] = {
+uint32_t trailing_unaligned_byte_hashes[32] = {
   0xDFDD19BE, 0xD2D258E4, 0x3F67D485, 0xFF300DA4, 0xFC46B871,
   0x6B97174C, 0x3C6873C6, 0x3DE4FDA4, 0x783A2D5F, 0x2ECC37AC,
   0xFEFAD741, 0x5FFB72DF, 0xF6E6DD29, 0xCD21E04E, 0x78CAE842,
@@ -37,7 +37,7 @@ __uint32_t trailing_unaligned_byte_hashes[32] = {
   0xD1683190, 0x7ABB3299
 };
 
-__uint32_t leading_unaligned_byte_hashes[32] = {
+uint32_t leading_unaligned_byte_hashes[32] = {
   0xA6C6EC55, 0x10BA5C53, 0xE991A1AB, 0xD9279D86, 0xEF21C396,
   0x78A4387C, 0x2F865A77, 0xAEA7587C, 0x9779C9D0, 0x914DD47A,
   0xB42B53CB, 0x47D39201, 0xE53E891F, 0xB4501BA1, 0xE946965F,
@@ -47,7 +47,7 @@ __uint32_t leading_unaligned_byte_hashes[32] = {
   0x203ACDCA, 0x48B56C22
 };
 
-__uint32_t variable_alignment_variable_length_hashes[] = {
+uint32_t variable_alignment_variable_length_hashes[] = {
   0x00000000, 0xB40BBE37, 0x98662B02, 0x062ED334, 0xFD64D7A9, 0xCA47A65D,
   0x70A0B329, 0x191C96C2, 0xFECD07E0, 0x5120CD3D, 0xC886714D, 0x5416D158,
   0xA9E8B882, 0x7B18C316, 0x0A7BB6E4, 0x19664DC7, 0x71A8E3C4, 0xDD7CD42A,
@@ -57,7 +57,7 @@ __uint32_t variable_alignment_variable_length_hashes[] = {
 };
 
 int
-main (int argc, char *argv[])
+main (void)
 {
   uint32_t p;
   size_t i, j;
