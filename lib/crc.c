@@ -445,37 +445,57 @@ crc32_update_no_xor_slice_by_8 (uint32_t crc, const char *buf)
 uint32_t
 crc32_update_no_xor_slice_by_8_polynomial (uint32_t crc, const char *buf)
 {
-  uint64_t local_buf;
+  uint64_t local_buf, mid101s;
   memcpy(&local_buf, buf, 8);
   local_buf = le64toh(local_buf) ^ crc;
-    local_buf = local_buf ^ \
+    // local_buf = local_buf ^ \
+    //       (local_buf << 6) ^ \
+    //       (local_buf << 9) ^ \
+    //       (local_buf << 10) ^ \
+    //       (local_buf << 12) ^ \
+    //       (local_buf << 16) ^ \
+    //       (local_buf << 24) ^ \
+    //       (local_buf << 25) ^ \
+    //       (local_buf << 26) ^ \
+    //       (local_buf << 28) ^ \
+    //       (local_buf << 29) ^ \
+    //       (local_buf << 30) ^ \
+    //       (local_buf << 31) ^ \
+    //       (local_buf << 32) ^ \
+    //       (local_buf << 34) ^ \
+    //       (local_buf << 37) ^ \
+    //       (local_buf << 44) ^ \
+    //       (local_buf << 45) ^ \
+    //       (local_buf << 47) ^ \
+    //       (local_buf << 48) ^ \
+    //       (local_buf << 50) ^ \
+    //       (local_buf << 53) ^ \
+    //       (local_buf << 54) ^ \
+    //       (local_buf << 55) ^ \
+    //       (local_buf << 58) ^ \
+    //       (local_buf << 60) ^ \
+    //       (local_buf << 61) ^ \
+    //       (local_buf << 63);
+    mid101s = local_buf ^ (local_buf << 2);
+        local_buf = local_buf ^ \
           (local_buf << 6) ^ \
           (local_buf << 9) ^ \
-          (local_buf << 10) ^ \
-          (local_buf << 12) ^ \
+		  (mid101s << 10) ^ \
           (local_buf << 16) ^ \
           (local_buf << 24) ^ \
           (local_buf << 25) ^ \
-          (local_buf << 26) ^ \
-          (local_buf << 28) ^ \
-          (local_buf << 29) ^ \
+		  (mid101s << 26) ^ \
+		  (mid101s << 29) ^ \
           (local_buf << 30) ^ \
-          (local_buf << 31) ^ \
-          (local_buf << 32) ^ \
-          (local_buf << 34) ^ \
+		  (mid101s << 32) ^ \
           (local_buf << 37) ^ \
           (local_buf << 44) ^ \
-          (local_buf << 45) ^ \
-          (local_buf << 47) ^ \
-          (local_buf << 48) ^ \
-          (local_buf << 50) ^ \
-          (local_buf << 53) ^ \
+		  (mid101s << 45) ^ \
+		  (mid101s << 48) ^ \
+		  (mid101s << 53) ^ \
           (local_buf << 54) ^ \
-          (local_buf << 55) ^ \
-          (local_buf << 58) ^ \
-          (local_buf << 60) ^ \
-          (local_buf << 61) ^ \
-          (local_buf << 63);
+		  (mid101s << 58) ^ \
+		  (mid101s << 61);
     
     local_buf = (local_buf >> 32) ^ \
           (local_buf >> 33) ^ \
