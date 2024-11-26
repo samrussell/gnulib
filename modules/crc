@@ -11,9 +11,11 @@ m4/build-cc.m4
 Depends-on:
 stdint
 endian
+crc-x86_64 [GL_CRC_PCLMUL = 1]
 
 configure.ac:
 AC_REQUIRE([gl_CRC_SLICE_BY_8])
+AC_REQUIRE([gl_CRC_PCLMUL])
 gl_BUILD_CC
 AC_PROG_MKDIR_P
 

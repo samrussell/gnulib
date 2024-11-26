@@ -52,6 +52,11 @@ extern uint32_t
 crc32_update_no_xor (uint32_t crc, const char *buf, size_t len)
   _GL_ATTRIBUTE_PURE;
 
+#ifdef GL_CRC_PCLMUL
+extern uint32_t
+crc32_update_no_xor_pclmul (uint32_t crc, const void *buf, size_t len)
+  _GL_ATTRIBUTE_PURE;
+#endif
 
 #ifdef __cplusplus
 }
